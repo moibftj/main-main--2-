@@ -1,8 +1,20 @@
-# Gemini AI Integration Guide
+# ⚠️ DEPRECATED - Gemini AI Integration Guide
 
-## Overview
+## ⚠️ DEPRECATION NOTICE
 
-This application uses **Google Gemini 2.5 Flash** for AI-powered letter generation and improvement. The integration follows a robust error handling pattern with proper status tracking.
+**This document is OUTDATED and kept for historical reference only.**
+
+**Current Implementation:** This application now uses **OpenAI GPT-4 Turbo via Vercel AI SDK**.
+
+**For current AI integration documentation, see:**
+- [CLAUDE.md](./CLAUDE.md) - Current implementation guide
+- [.copilot-codeGeneration-instructions.md](./.copilot-codeGeneration-instructions.md) - AI coding guidelines
+
+---
+
+## Overview (Historical)
+
+This application previously used **Google Gemini 2.5 Flash** for AI-powered letter generation and improvement. The integration followed a robust error handling pattern with proper status tracking.
 
 ---
 
