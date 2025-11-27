@@ -3,16 +3,20 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-11-17.clover',
+  apiVersion: '2024-12-18.acacia',
 }) : null
 
 const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true'
 
 export async function POST(request: NextRequest) {
+  console.log('[Checkout] Request received, TEST_MODE:', TEST_MODE)
+  
   try {
     const supabase = await createClient()
 
     const { data: { user }, error: authError } = await supabase.auth.getUser()
+    console.log('[Checkout] Auth check - user:', user?.id, 'error:', authError?.message)
+    
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
