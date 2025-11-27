@@ -32,7 +32,9 @@
       "Bash(VERCEL_TOKEN=Si1Vxw3yc9dhVAIT0mglrFj5 vercel:*)",
       "Bash(VERCEL_TOKEN=XWv24FjOcxw8qKOjpkQVciD2 vercel:*)",
       "Bash(https://api.vercel.com/v13/projects )",
-      "Bash(https://api.vercel.com/v13/projects/talk-to-my-lawyer/deployments )"
+      "Bash(https://api.vercel.com/v13/projects/talk-to-my-lawyer/deployments )",
+      "Bash(supabase:*)",
+      "Bash(env:*)"
     ],
     "deny": [],
     "ask": []
