@@ -112,6 +112,13 @@ export function SubscriptionCard() {
 
       const data = await response.json()
 
+      // Test mode - direct redirect
+      if (data.testMode && data.redirectUrl) {
+        router.push(data.redirectUrl)
+        router.refresh()
+        return
+      }
+
       // If Stripe checkout URL is returned, redirect to it
       if (data.url) {
         window.location.href = data.url
@@ -130,9 +137,25 @@ export function SubscriptionCard() {
 
   const selectedPlanData = PLANS.find(p => p.id === selectedPlan)
   const finalPrice = selectedPlanData ? selectedPlanData.price - discount : 0
+  const isTestMode = process.env.NEXT_PUBLIC_TEST_MODE === 'true'
 
   return (
     <div className="space-y-8">
+      {/* Test Mode Banner */}
+      {isTestMode && (
+        <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div className="flex-1">
+              <h4 className="font-semibold text-yellow-900">Test Mode Enabled</h4>
+              <p className="text-sm text-yellow-800">Payments will be simulated without charging. Subscriptions will be activated immediately.</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="grid md:grid-cols-3 gap-6">
         {PLANS.map((plan) => (
           <button

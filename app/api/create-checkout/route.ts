@@ -2,9 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2025-01-27.acacia',
-})
+}) : null
+
+const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true'
 
 export async function POST(request: NextRequest) {
   try {
@@ -158,6 +160,98 @@ export async function POST(request: NextRequest) {
         letters: selectedPlan.letters,
         message: 'Subscription created successfully'
       })
+    }
+
+    // ===== TEST MODE: Simulate successful payment without Stripe =====
+    if (TEST_MODE) {
+      console.log('[Checkout] TEST MODE: Simulating payment for user:', user.id)
+      
+      // Create subscription directly as if payment succeeded
+      const { data: subscription, error: subError } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          plan: planType,
+          plan_type: selectedPlan.planType,
+          status: 'active',
+          price: finalPrice,
+          discount: discountAmount,
+          coupon_code: couponCode || null,
+          remaining_letters: selectedPlan.letters,
+          credits_remaining: selectedPlan.letters,
+          stripe_session_id: `test_session_${Date.now()}`, // Mock session ID
+          last_reset_at: new Date().toISOString(),
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        })
+        .select()
+        .single()
+
+      if (subError) {
+        console.error('[Checkout] TEST MODE: Subscription creation error:', subError)
+        throw new Error(`Failed to create subscription: ${subError.message}`)
+      }
+
+      // Track coupon usage
+      if (couponCode) {
+        await supabase
+          .from('coupon_usage')
+          .insert({
+            user_id: user.id,
+            coupon_code: couponCode,
+            employee_id: employeeId,
+            subscription_id: subscription.id,
+            discount_percent: discount,
+            amount_before: basePrice,
+            amount_after: finalPrice
+          })
+      }
+
+      // Create commission if employee referral
+      if (employeeId && subscription) {
+        const commissionAmount = finalPrice * 0.05
+        await supabase
+          .from('commissions')
+          .insert({
+            employee_id: employeeId,
+            subscription_id: subscription.id,
+            subscription_amount: finalPrice,
+            commission_rate: 0.05,
+            commission_amount: commissionAmount,
+            status: 'pending'
+          })
+
+        // Update coupon usage count
+        const { data: currentCoupon } = await supabase
+          .from('employee_coupons')
+          .select('usage_count')
+          .eq('code', couponCode)
+          .maybeSingle()
+
+        await supabase
+          .from('employee_coupons')
+          .update({
+            usage_count: (currentCoupon?.usage_count || 0) + 1,
+            updated_at: new Date().toISOString()
+          })
+          .eq('code', couponCode)
+      }
+
+      console.log('[Checkout] TEST MODE: Payment simulated successfully')
+      
+      return NextResponse.json({
+        success: true,
+        testMode: true,
+        subscriptionId: subscription.id,
+        letters: selectedPlan.letters,
+        message: 'TEST MODE: Subscription created successfully (simulated payment)',
+        redirectUrl: `/dashboard/subscription?success=true&test=true`
+      })
+    }
+
+    // ===== PRODUCTION MODE: Use Stripe for real payments =====
+    if (!stripe) {
+      throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.')
     }
 
     // Create Stripe Checkout Session for paid plans
