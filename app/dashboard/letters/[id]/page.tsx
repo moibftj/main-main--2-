@@ -8,14 +8,15 @@ import Link from 'next/link'
 import { LetterActions } from '@/components/letter-actions'
 import { ReviewStatusModal } from '@/components/review-status-modal'
 
-export default async function LetterDetailPage({ params }: { params: { id: string } }) {
+export default async function LetterDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const { profile } = await getUser()
   const supabase = await createClient()
 
   const { data: letter } = await supabase
     .from('letters')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!letter) {
