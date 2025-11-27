@@ -2,14 +2,33 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-01-27.acacia',
-})
+const STRIPE_API_VERSION: Stripe.LatestApiVersion = '2023-10-16'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getStripeClient() {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+
+  if (!stripeSecretKey) {
+    throw new Error('Missing STRIPE_SECRET_KEY environment variable')
+  }
+
+  return new Stripe(stripeSecretKey, { apiVersion: STRIPE_API_VERSION })
+}
+
+function getSupabaseServiceClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error('Missing Supabase service configuration')
+  }
+
+  return createClient(supabaseUrl, supabaseServiceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +37,9 @@ export async function POST(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json({ error: 'Session ID required' }, { status: 400 })
     }
+
+    const stripe = getStripeClient()
+    const supabase = getSupabaseServiceClient()
 
     // Retrieve the session from Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId)
@@ -37,17 +59,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         subscriptionId: existingSub.id,
-        message: 'Subscription already created'
+        message: 'Subscription already created',
       })
     }
 
-    const metadata = session.metadata!
+    const metadata = session.metadata || {}
     const userId = metadata.user_id
     const planType = metadata.plan_type
-    const letters = parseInt(metadata.letters)
-    const basePrice = parseFloat(metadata.base_price)
-    const discount = parseFloat(metadata.discount)
-    const finalPrice = parseFloat(metadata.final_price)
+
+    if (!userId || !planType) {
+      return NextResponse.json({ error: 'Missing session metadata' }, { status: 400 })
+    }
+
+    const letters = parseInt(metadata.letters ?? '0')
+    const basePrice = parseFloat(metadata.base_price ?? '0')
+    const discount = parseFloat(metadata.discount ?? '0')
+    const finalPrice = parseFloat(metadata.final_price ?? '0')
     const couponCode = metadata.coupon_code || null
     const employeeId = metadata.employee_id || null
     const isSuperUserCoupon = metadata.is_super_user_coupon === 'true'
@@ -68,7 +95,7 @@ export async function POST(request: NextRequest) {
         last_reset_at: new Date().toISOString(),
         current_period_start: new Date().toISOString(),
         current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        stripe_session_id: sessionId
+        stripe_session_id: sessionId,
       })
       .select()
       .single()
@@ -94,9 +121,9 @@ export async function POST(request: NextRequest) {
           user_id: userId,
           coupon_code: couponCode,
           employee_id: employeeId,
-          discount_percent: (discount / basePrice) * 100,
+          discount_percent: basePrice ? (discount / basePrice) * 100 : 0,
           amount_before: basePrice,
-          amount_after: finalPrice
+          amount_after: finalPrice,
         })
     }
 
@@ -112,7 +139,7 @@ export async function POST(request: NextRequest) {
           subscription_amount: finalPrice,
           commission_rate: 0.05,
           commission_amount: commissionAmount,
-          status: 'pending'
+          status: 'pending',
         })
 
       // Update coupon usage count
@@ -126,7 +153,7 @@ export async function POST(request: NextRequest) {
         .from('employee_coupons')
         .update({
           usage_count: (currentCoupon?.usage_count || 0) + 1,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('code', couponCode)
     }
@@ -135,14 +162,13 @@ export async function POST(request: NextRequest) {
       success: true,
       subscriptionId: subscription.id,
       letters: letters,
-      message: 'Subscription created successfully'
+      message: 'Subscription created successfully',
     })
-
   } catch (error) {
     console.error('[Verify Payment] Error:', error)
     return NextResponse.json(
       { error: 'Failed to verify payment' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }
