@@ -179,7 +179,6 @@ export async function POST(request: NextRequest) {
           coupon_code: couponCode || null,
           remaining_letters: selectedPlan.letters,
           credits_remaining: selectedPlan.letters,
-          stripe_session_id: `test_session_${Date.now()}`, // Mock session ID
           last_reset_at: new Date().toISOString(),
           current_period_start: new Date().toISOString(),
           current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
