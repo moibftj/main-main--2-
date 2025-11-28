@@ -12,7 +12,7 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE letter_status AS ENUM ('draft', 'pending_review', 'approved', 'rejected');
+    CREATE TYPE letter_status AS ENUM ('draft', 'generating', 'pending_review', 'under_review', 'approved', 'rejected', 'completed', 'failed');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;

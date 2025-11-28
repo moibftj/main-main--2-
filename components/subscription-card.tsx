@@ -61,6 +61,18 @@ export function SubscriptionCard() {
     setError(null)
 
     try {
+      // Special handling for TALK3 coupon (100% discount, no database lookup)
+      if (coupon.toUpperCase() === 'TALK3') {
+        const plan = PLANS.find(p => p.id === selectedPlan)
+        if (plan) {
+          setDiscount(plan.price) // 100% discount
+          setCouponApplied(true)
+          setError(null)
+        }
+        setLoading(false)
+        return
+      }
+
       // Check employee coupons (supports special characters)
       const { data, error } = await supabase
         .from('employee_coupons')

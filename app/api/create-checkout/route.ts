@@ -30,22 +30,30 @@ export async function POST(request: NextRequest) {
     let couponId = null
 
     if (couponCode) {
-      // Check employee coupons in database (including special promo codes)
-      const { data: coupon } = await supabase
-        .from('employee_coupons')
-        .select('*')
-        .eq('code', couponCode)
-        .eq('is_active', true)
-        .single()
+      // Special handling for TALK3 coupon (100% discount, no database lookup, no commission)
+      if (couponCode.toUpperCase() === 'TALK3') {
+        discount = 100
+        employeeId = null // No commission for TALK3
+        isSuperUserCoupon = false // Not a super user coupon
+        couponId = null
+      } else {
+        // Check employee coupons in database (including special promo codes)
+        const { data: coupon } = await supabase
+          .from('employee_coupons')
+          .select('*')
+          .eq('code', couponCode)
+          .eq('is_active', true)
+          .single()
 
-      if (coupon) {
-        discount = coupon.discount_percent
-        employeeId = coupon.employee_id
-        couponId = coupon.id
+        if (coupon) {
+          discount = coupon.discount_percent
+          employeeId = coupon.employee_id
+          couponId = coupon.id
 
-        // If 100% discount, mark as super user
-        if (discount === 100) {
-          isSuperUserCoupon = true
+          // If 100% discount, mark as super user
+          if (discount === 100) {
+            isSuperUserCoupon = true
+          }
         }
       }
     }

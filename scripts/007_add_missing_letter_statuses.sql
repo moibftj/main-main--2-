@@ -1,5 +1,9 @@
 -- Add missing letter_status enum values
 -- This ensures the database supports all status values used in the workflow
+--
+-- NOTE: As of the latest 001_setup_schema.sql, these values are included in the base enum.
+-- This migration is kept for backwards compatibility with existing databases that were
+-- created before the enum was updated. For fresh databases, these values already exist.
 
 -- Add 'generating' status (when AI is creating the draft)
 ALTER TYPE letter_status ADD VALUE IF NOT EXISTS 'generating';
