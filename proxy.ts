@@ -202,6 +202,34 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // Admin auth middleware for /admin routes
+  if (pathname.startsWith('/admin')) {
+    const supabase = await createClient()
+
+    // Refresh session if possible
+    const { data: { session }, error } = await supabase.auth.getSession()
+
+    if (!session || error) {
+      // Redirect to login
+      const loginUrl = new URL('/auth/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    // Verify admin role
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single()
+
+    if (!profile || profile.role !== 'admin') {
+      // Not an admin, redirect with error
+      const dashboardUrl = new URL('/dashboard?error=admin-access-required', request.url)
+      return NextResponse.redirect(dashboardUrl)
+    }
+  }
+
   // Auth middleware for protected routes
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/letters/')) {
     const supabase = await createClient()
