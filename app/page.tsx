@@ -42,6 +42,8 @@ import {
 import jsPDF from 'jspdf'
 import Link from 'next/link'
 import PricingSection from '@/components/ui/pricing-section'
+import { motion, useInView, useScroll, useTransform, useSpring } from 'motion/react'
+import { useRef } from 'react'
 
 const LETTER_TYPES = [
   { value: 'demand_letter', label: 'Demand Letter', price: 299 },
@@ -213,54 +215,276 @@ export default function HomePage() {
           </div>
         </nav>
 
-        {/* Hero Section */}
-        <section className="pt-20 pb-32 px-4 sm:px-6 lg:px-8 parallax-bg">
-          <div className="max-w-7xl mx-auto text-center">
-            <div className="text-center mb-16 scroll-reveal">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 text-gradient-animated">
-                Need a Lawyer&apos;s <span className="text-gray-900">Voice</span>
-                <br />
-                <span className="text-gray-900">Without the Legal Bill?</span>
-              </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed animate-fade-in stagger-2">
+        {/* Hero Section with Professional Animations */}
+        <section className="pt-20 pb-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+          {/* Animated background elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <motion.div
+              className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
+              style={{ top: '10%', left: '10%' }}
+              animate={{
+                x: [0, 100, 0],
+                y: [0, -50, 0],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+            <motion.div
+              className="absolute w-96 h-96 bg-teal-500/20 rounded-full blur-3xl"
+              style={{ top: '50%', right: '10%' }}
+              animate={{
+                x: [0, -80, 0],
+                y: [0, 60, 0],
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </div>
+
+          <div className="max-w-7xl mx-auto text-center relative z-10">
+            {/* Main hero heading with staggered animation */}
+            <motion.div
+              className="text-center mb-16"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.2,
+                    delayChildren: 0.3,
+                  },
+                },
+              }}
+            >
+              <motion.h1
+                className="text-5xl md:text-7xl font-bold mb-6"
+                style={{
+                  background: 'linear-gradient(135deg, #1e293b 0%, #3b82f6 30%, #8b5cf6 70%, #1e293b 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+                variants={{
+                  hidden: { opacity: 0, y: 30, filter: 'blur(10px)' },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    filter: 'blur(0px)',
+                    transition: {
+                      duration: 0.8,
+                      ease: [0.25, 0.46, 0.45, 0.94]
+                    }
+                  },
+                }}
+              >
+                Need a Lawyer&apos;s
+                <motion.span
+                  className="block"
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        duration: 0.8,
+                        delay: 0.2,
+                      }
+                    },
+                  }}
+                >
+                  <span className="text-gray-900">Voice Without the</span>
+                  <br />
+                  <span className="text-gray-900">Legal Bill?</span>
+                </motion.span>
+              </motion.h1>
+
+              <motion.p
+                className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      duration: 0.6,
+                      delay: 0.4,
+                    }
+                  },
+                }}
+              >
                 Get professional, lawyer-drafted letters for tenant disputes, debt collection, HR
                 issues, and more. Resolve conflicts quickly and affordably with the power of legal
                 communication.
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 scroll-reveal">
-              <Link href="/auth/signup">
-                <Button className="btn-netlify btn-enhanced text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group">
-                  <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
-                  Get Started Now
-                  <Sparkles className="h-4 w-4 ml-2 animate-bounce-gentle" />
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                onClick={() => scrollToSection('letter-types')}
-                className="border-blue-300 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 btn-enhanced group"
+            {/* CTA Buttons with enhanced animations */}
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.2,
+                    delayChildren: 0.6,
+                  },
+                },
+              }}
+            >
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8, y: 20 },
+                  visible: {
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                    transition: {
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 12,
+                    }
+                  },
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 20px 40px -15px rgba(59, 130, 246, 0.6)"
+                }}
+                whileTap={{ scale: 0.98 }}
               >
-                <FileText className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-200" />
-                View Letter Types
-              </Button>
-            </div>
+                <Link href="/auth/signup">
+                  <Button className="btn-enhanced-cta text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg relative overflow-hidden group">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"
+                      animate={{
+                        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                      style={{
+                        backgroundSize: '200% 200%',
+                      }}
+                    />
+                    <div className="relative z-10 flex items-center">
+                      <Play className="h-5 w-5 mr-2" />
+                      Get Started Now
+                      <Sparkles className="h-4 w-4 ml-2" />
+                    </div>
+                  </Button>
+                </Link>
+              </motion.div>
 
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600 scroll-reveal stagger-3">
-              <div className="flex items-center gap-2 animate-slide-up stagger-1">
-                <CheckCircle className="h-5 w-5 text-green-500 animate-pulse-scale" />
-                No Legal Fees
-              </div>
-              <div className="flex items-center gap-2 animate-slide-up stagger-2">
-                <CheckCircle className="h-5 w-5 text-green-500 animate-pulse-scale" />
-                24-48 Hour Delivery
-              </div>
-              <div className="flex items-center gap-2 animate-slide-up stagger-3">
-                <CheckCircle className="h-5 w-5 text-green-500 animate-pulse-scale" />
-                Lawyer Reviewed
-              </div>
-            </div>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8, y: 20 },
+                  visible: {
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                    transition: {
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 12,
+                      delay: 0.1,
+                    }
+                  },
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 30px -10px rgba(59, 130, 246, 0.3)"
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  variant="outline"
+                  onClick={() => scrollToSection('letter-types')}
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 group relative overflow-hidden"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-blue-50 opacity-0"
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  <div className="relative z-10 flex items-center">
+                    <motion.div
+                      whileHover={{ rotate: 12 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <FileText className="h-5 w-5 mr-2" />
+                    </motion.div>
+                    View Letter Types
+                  </div>
+                </Button>
+              </motion.div>
+            </motion.div>
+
+            {/* Feature highlights with staggered animation */}
+            <motion.div
+              className="flex flex-wrap justify-center gap-8 text-sm text-gray-600"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                    delayChildren: 0.9,
+                  },
+                },
+              }}
+            >
+              {[
+                { icon: CheckCircle, text: "No Legal Fees", color: "text-green-500" },
+                { icon: CheckCircle, text: "24-48 Hour Delivery", color: "text-green-500" },
+                { icon: CheckCircle, text: "Lawyer Reviewed", color: "text-green-500" },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.text}
+                  className="flex items-center gap-2"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 12,
+                      }
+                    },
+                  }}
+                >
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      delay: index * 0.2,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <item.icon className={`h-5 w-5 ${item.color}`} />
+                  </motion.div>
+                  {item.text}
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </section>
 

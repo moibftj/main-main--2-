@@ -875,3 +875,140 @@ body {
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
+
+/* Enhanced CTA Button with Blue Running Border */
+.btn-enhanced-cta {
+  position: relative !important;
+  overflow: hidden !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.btn-enhanced-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(
+    90deg,
+    #3b82f6,
+    #8b5cf6,
+    #06b6d4,
+    #3b82f6
+  );
+  border-radius: 0.5rem;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  animation: running-border 3s linear infinite;
+  z-index: -1;
+}
+
+.btn-enhanced-cta::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: linear-gradient(
+    90deg,
+    #3b82f6,
+    #8b5cf6,
+    #06b6d4,
+    #3b82f6
+  );
+  border-radius: calc(0.5rem - 2px);
+  z-index: -1;
+  opacity: 0.9;
+}
+
+@keyframes running-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Enhanced button hover effects */
+.btn-enhanced-cta:hover::before {
+  animation-duration: 1.5s;
+}
+
+.btn-enhanced-cta:active {
+  transform: scale(0.98);
+}
+
+/* Professional entrance animations */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Professional stats animations */
+.stats-animate {
+  animation: slideInFromBottom 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.stats-animate:nth-child(1) { animation-delay: 0.1s; }
+.stats-animate:nth-child(2) { animation-delay: 0.2s; }
+.stats-animate:nth-child(3) { animation-delay: 0.3s; }
+.stats-animate:nth-child(4) { animation-delay: 0.4s; }
+
+/* Letter card hover enhancements */
+.letter-card-enhanced {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.letter-card-enhanced:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 32px 64px -12px rgba(59, 130, 246, 0.25),
+    0 16px 32px -8px rgba(147, 51, 234, 0.15);
+}
+
+/* Accessibility: respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn-enhanced-cta::before,
+  .btn-enhanced-cta::after {
+    animation: none;
+  }
+
+  .stats-animate {
+    animation: none;
+    opacity: 1;
+  }
+
+  .letter-card-enhanced {
+    transform: none !important;
+  }
+}
