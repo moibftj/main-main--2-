@@ -11,7 +11,8 @@ import { Plus, ArrowRight, Shapes } from "lucide-react";
 
 export function Hero() {
   useEffect(() => {
-    renderCanvas();
+    const cleanup = renderCanvas();
+    return typeof cleanup === "function" ? cleanup : undefined;
   }, []);
 
   return (
@@ -37,7 +38,7 @@ export function Hero() {
         <div className="mb-10 mt-4  md:mt-6">
           <div className="px-2">
             <div className="border-ali relative mx-auto h-full max-w-7xl border p-6 [mask-image:radial-gradient(800rem_96rem_at_center,white,transparent)] md:px-12 md:py-20">
-              <h1 className="flex  select-none flex-col  px-3 py-2 text-center text-5xl font-semibold leading-none tracking-tight md:flex-col md:text-8xl lg:flex-row lg:text-8xl">
+              <div className="flex  select-none flex-col  px-3 py-2 text-center text-5xl font-semibold leading-none tracking-tight md:flex-col md:text-8xl lg:flex-row lg:text-8xl relative">
                 <Plus
                   strokeWidth={4}
                   className="text-ali absolute -left-5 -top-5 h-10 w-10"
@@ -55,7 +56,7 @@ export function Hero() {
                   className="text-ali absolute -bottom-5 -right-5 h-10 w-10"
                 />
                 Your complete platform for the Design.
-              </h1>
+              </div>
               <div className="flex items-center justify-center gap-1">
                 <span className="relative flex h-3 w-3 items-center justify-center">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75"></span>
@@ -81,7 +82,7 @@ export function Hero() {
                 Start Project
               </Button>
             </Link>
-            <Link href={"https://cal.com/aliimam/designali"} target="_blank">
+            <Link href={"https://cal.com/aliimam/designali"} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="lg">
                 Book a call
               </Button>
