@@ -205,9 +205,15 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Link href="/auth/signup">
-                  <Button className="btn-netlify btn-enhanced text-white">
-                    Get Started
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                  <Button variant="running_border" size="sm" className="glow-enhanced">
+                    <motion.span
+                      className="flex items-center"
+                      whileHover={{ x: 3 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      Get Started
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </motion.span>
                   </Button>
                 </Link>
               </div>
@@ -217,32 +223,78 @@ export default function HomePage() {
 
         {/* Hero Section with Professional Animations */}
         <section className="pt-20 pb-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-          {/* Animated background elements */}
+          {/* Enhanced Animated background elements */}
           <div className="absolute inset-0 overflow-hidden">
+            {/* Large morphing gradient orb */}
             <motion.div
-              className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
-              style={{ top: '10%', left: '10%' }}
+              className="absolute w-[800px] h-[800px] rounded-full opacity-20 blur-3xl morphing-bg"
+              style={{
+                background: 'radial-gradient(circle, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)',
+                top: '-20%',
+                left: '-10%'
+              }}
               animate={{
-                x: [0, 100, 0],
-                y: [0, -50, 0],
+                x: [0, 150, -100, 0],
+                y: [0, -100, 150, 0],
               }}
               transition={{
-                duration: 20,
+                duration: 40,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
             />
+
+            {/* Secondary orb with different timing */}
             <motion.div
-              className="absolute w-96 h-96 bg-teal-500/20 rounded-full blur-3xl"
-              style={{ top: '50%', right: '10%' }}
+              className="absolute w-[600px] h-[600px] rounded-full opacity-20 blur-3xl morphing-bg"
+              style={{
+                background: 'radial-gradient(circle, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%)',
+                top: '40%',
+                right: '-10%'
+              }}
               animate={{
-                x: [0, -80, 0],
-                y: [0, 60, 0],
+                x: [0, -200, 100, 0],
+                y: [0, 150, -100, 0],
               }}
               transition={{
-                duration: 25,
+                duration: 35,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: "easeInOut",
+                delay: 5
+              }}
+            />
+
+            {/* Floating particles */}
+            {Array.from({ length: 20 }).map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 bg-blue-400/40 rounded-full"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -50, 0],
+                  x: [0, 30, -30, 0],
+                  opacity: [0.2, 0.8, 0.2],
+                  scale: [1, 1.5, 1],
+                }}
+                transition={{
+                  duration: 15 + Math.random() * 10,
+                  repeat: Infinity,
+                  delay: Math.random() * 5,
+                  ease: "easeInOut"
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 opacity-30">
+            <div
+              className="w-full h-full"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width="60" height="60" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"%3E%3Cpath d="M 60 0 L 0 0 0 60" fill="none" stroke="%23e2e8f0" stroke-width="0.5"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100%25" height="100%25" fill="url(%23grid)" /%3E%3C/svg%3E")`,
               }}
             />
           </div>
@@ -328,7 +380,7 @@ export default function HomePage() {
 
             {/* CTA Buttons with enhanced animations */}
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
               initial="hidden"
               animate="visible"
               variants={{
@@ -344,89 +396,69 @@ export default function HomePage() {
             >
               <motion.div
                 variants={{
-                  hidden: { opacity: 0, scale: 0.8, y: 20 },
+                  hidden: { opacity: 0, scale: 0.8, y: 30 },
                   visible: {
                     opacity: 1,
                     scale: 1,
                     y: 0,
                     transition: {
                       type: "spring",
-                      stiffness: 100,
-                      damping: 12,
+                      stiffness: 120,
+                      damping: 14,
                     }
                   },
                 }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 20px 40px -15px rgba(59, 130, 246, 0.6)"
-                }}
-                whileTap={{ scale: 0.98 }}
               >
                 <Link href="/auth/signup">
-                  <Button className="btn-enhanced-cta text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg relative overflow-hidden group">
+                  <Button variant="running_border" className="px-12 py-5 text-lg font-semibold rounded-xl glow-enhanced gpu-accelerated">
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"
-                      animate={{
-                        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                      style={{
-                        backgroundSize: '200% 200%',
-                      }}
-                    />
-                    <div className="relative z-10 flex items-center">
-                      <Play className="h-5 w-5 mr-2" />
+                      className="flex items-center"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      <Play className="h-5 w-5 mr-3" />
                       Get Started Now
-                      <Sparkles className="h-4 w-4 ml-2" />
-                    </div>
+                      <Sparkles className="h-5 w-5 ml-3 text-shimmer" />
+                    </motion.div>
                   </Button>
                 </Link>
               </motion.div>
 
               <motion.div
                 variants={{
-                  hidden: { opacity: 0, scale: 0.8, y: 20 },
+                  hidden: { opacity: 0, scale: 0.8, y: 30 },
                   visible: {
                     opacity: 1,
                     scale: 1,
                     y: 0,
                     transition: {
                       type: "spring",
-                      stiffness: 100,
-                      damping: 12,
+                      stiffness: 120,
+                      damping: 14,
                       delay: 0.1,
                     }
                   },
                 }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 30px -10px rgba(59, 130, 246, 0.3)"
-                }}
-                whileTap={{ scale: 0.98 }}
               >
                 <Button
                   variant="outline"
                   onClick={() => scrollToSection('letter-types')}
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 group relative overflow-hidden"
+                  className="px-12 py-5 text-lg font-semibold rounded-xl border-2 border-blue-200 text-blue-600 bg-white/80 backdrop-blur-sm hover:bg-blue-50 hover:border-blue-300 hover:shadow-xl transition-all duration-300 group ripple magnetic-btn"
                 >
                   <motion.div
-                    className="absolute inset-0 bg-blue-50 opacity-0"
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <div className="relative z-10 flex items-center">
+                    className="flex items-center"
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
                     <motion.div
-                      whileHover={{ rotate: 12 }}
+                      whileHover={{ rotate: 15 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <FileText className="h-5 w-5 mr-2" />
+                      <FileText className="h-5 w-5 mr-3" />
                     </motion.div>
                     View Letter Types
-                  </div>
+                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </motion.div>
                 </Button>
               </motion.div>
             </motion.div>

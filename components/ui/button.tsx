@@ -26,7 +26,11 @@ const buttonVariants = cva(
 
         // ⭐ ENHANCED CTA WITH ANIMATED RUNNING BORDER
         primary_animated:
-          "btn-enhanced-cta text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          "btn-enhanced-cta text-white shadow-lg hover:shadow-xl transition-all duration-300",
+
+        // ⭐ BLUE RUNNING BORDER ANIMATION
+        running_border:
+          "btn-running-border text-white shadow-lg hover:shadow-xl transition-all duration-300"
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
