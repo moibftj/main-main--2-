@@ -163,11 +163,11 @@ export default async function AdminDashboard() {
           <CardContent>
             {recentLetters && recentLetters.length > 0 ? (
               <div className="space-y-3">
-                {recentLetters.map((letter) => (
+                {recentLetters.map((letter: any) => (
                   <div key={letter.id} className="flex items-center justify-between">
                     <div className="flex-1">
                       <p className="text-sm font-medium truncate">{letter.title}</p>
-                      <p className="text-xs text-gray-500">{letter.profiles.email}</p>
+                      <p className="text-xs text-gray-500">{letter.profiles?.email}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(letter.status)}
