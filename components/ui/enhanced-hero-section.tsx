@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useInView, MotionValue } from 'motion/react'
+import { motion, useScroll, useTransform, useInView } from 'motion/react'
 import { useRef, useEffect, useState } from 'react'
 import { Sparkles, ArrowRight, Play, CheckCircle } from 'lucide-react'
 
@@ -20,7 +20,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end start"]
+    offset: ['start start', 'end start'],
   })
 
   const titleY = useTransform(scrollYProgress, [0, 1], [0, -50])
@@ -28,7 +28,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
   const buttonY = useTransform(scrollYProgress, [0, 0.5], [0, 30])
   const buttonOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0])
 
-  const isInView = useInView(containerRef, { once: true, margin: "-100px" })
+  const isInView = useInView(containerRef, { once: true, margin: '-100px' })
   const [particles, setParticles] = useState<Particle[]>([])
   const [mounted, setMounted] = useState(false)
 
@@ -41,23 +41,15 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
       y: Math.random() * 100,
       size: Math.random() * 4 + 1,
       duration: Math.random() * 20 + 10,
-      delay: Math.random() * 5
+      delay: Math.random() * 5,
     }))
     setParticles(newParticles)
   }, [])
 
   // Floating animation values
   const floatValues = Array.from({ length: 6 }, (_, i) => ({
-    y: useTransform(
-      scrollYProgress,
-      [0, 1],
-      [0, Math.sin(i) * 30 + Math.random() * 20]
-    ),
-    rotate: useTransform(
-      scrollYProgress,
-      [0, 1],
-      [0, Math.cos(i) * 15 + Math.random() * 10]
-    )
+    y: useTransform(scrollYProgress, [0, 1], [0, Math.sin(i) * 30 + Math.random() * 20]),
+    rotate: useTransform(scrollYProgress, [0, 1], [0, Math.cos(i) * 15 + Math.random() * 10]),
   }))
 
   return (
@@ -83,7 +75,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
           transition={{
             duration: 25,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
 
@@ -102,7 +94,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
           transition={{
             duration: 30,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
 
@@ -121,38 +113,44 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
           transition={{
             duration: 35,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
 
         {/* Particles */}
-        {mounted && particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            className="absolute rounded-full bg-blue-400/30"
-            style={{
-              width: particle.size,
-              height: particle.size,
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [0, 20, -20, 0],
-              opacity: [0.3, 0.8, 0.3],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              delay: particle.delay,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+        {mounted &&
+          particles.map((particle) => (
+            <motion.div
+              key={particle.id}
+              className="absolute rounded-full bg-blue-400/30"
+              style={{
+                width: particle.size,
+                height: particle.size,
+                left: `${particle.x}%`,
+                top: `${particle.y}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                x: [0, 20, -20, 0],
+                opacity: [0.3, 0.8, 0.3],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: particle.duration,
+                repeat: Infinity,
+                delay: particle.delay,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
 
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cdefs%3E%3Cpattern id=%22grid%22 width=%2260%22 height=%2260%22 patternUnits=%22userSpaceOnUse%22%3E%3Cpath d=%22M 60 0 L 0 0 0 60%22 fill=%22none%22 stroke=%22%23e2e8f0%22 stroke-width=%220.5%22/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22url(%23grid)%22 /%3E%3C/svg%3E')] opacity-30" />
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 60 0 L 0 0 0 60' fill='none' stroke='%23e2e8f0' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' /%3E%3C/svg%3E")`,
+          }}
+        />
       </div>
 
       {/* Content */}
@@ -179,7 +177,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
             animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            Need a Lawyer's
+            Need a Lawyer&apos;s
           </motion.span>
           <motion.span
             className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600"
@@ -206,9 +204,8 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
           transition={{ duration: 0.6, delay: 0.9 }}
           className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed"
         >
-          Get professional, lawyer-drafted letters for tenant disputes, debt collection,
-          HR issues, and more. Resolve conflicts quickly and affordably with the power
-          of legal communication.
+          Get professional, lawyer-drafted letters for tenant disputes, debt collection, HR issues, and more. Resolve
+          conflicts quickly and affordably with the power of legal communication.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -220,14 +217,14 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 100,
               damping: 12,
-              delay: 1.1
+              delay: 1.1,
             }}
             whileHover={{
               scale: 1.05,
-              transition: { duration: 0.2 }
+              transition: { duration: 0.2 },
             }}
             whileTap={{ scale: 0.98 }}
           >
@@ -253,7 +250,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
                     transition={{
                       duration: 3,
                       repeat: Infinity,
-                      ease: "linear",
+                      ease: 'linear',
                     }}
                     style={{
                       backgroundSize: '200% 200%',
@@ -270,7 +267,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
                   transition={{
                     duration: 2,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: 'easeInOut',
                   }}
                 >
                   <Play className="w-5 h-5 mr-3" />
@@ -282,8 +279,8 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
                   transition={{
                     duration: 2,
                     repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.5
+                    ease: 'easeInOut',
+                    delay: 0.5,
                   }}
                 >
                   <ArrowRight className="w-5 h-5" />
@@ -296,14 +293,14 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 100,
               damping: 12,
-              delay: 1.3
+              delay: 1.3,
             }}
             whileHover={{
               scale: 1.05,
-              transition: { duration: 0.2 }
+              transition: { duration: 0.2 },
             }}
             whileTap={{ scale: 0.98 }}
           >
@@ -328,9 +325,9 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
           transition={{ duration: 0.8, delay: 1.5 }}
         >
           {[
-            { text: "No Legal Fees", delay: 1.7 },
-            { text: "24-48 Hour Delivery", delay: 1.9 },
-            { text: "Lawyer Reviewed", delay: 2.1 }
+            { text: 'No Legal Fees', delay: 1.7 },
+            { text: '24-48 Hour Delivery', delay: 1.9 },
+            { text: 'Lawyer Reviewed', delay: 2.1 },
           ].map((feature, index) => (
             <motion.div
               key={feature.text}
@@ -339,12 +336,12 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
               transition={{
                 duration: 0.6,
                 delay: feature.delay,
-                type: "spring",
-                stiffness: 100
+                type: 'spring',
+                stiffness: 100,
               }}
               whileHover={{
                 y: -5,
-                transition: { duration: 0.2 }
+                transition: { duration: 0.2 },
               }}
               className="flex items-center justify-center gap-3 text-gray-700 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
             >
@@ -357,7 +354,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
                   duration: 2,
                   repeat: Infinity,
                   delay: index * 0.2,
-                  ease: "easeInOut"
+                  ease: 'easeInOut',
                 }}
               >
                 <CheckCircle className="w-6 h-6 text-green-500" />
@@ -383,7 +380,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
           <motion.div
             className="w-1 h-3 bg-blue-400 rounded-full mt-2"
             animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           />
         </motion.div>
       </motion.div>
