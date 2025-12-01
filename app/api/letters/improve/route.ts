@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       Return ONLY the improved letter content, no additional commentary.`,
       prompt: `Please improve the following legal letter:\n\nLetter Title: ${letter.title}\nLetter Type: ${letter.letter_type}\nContext: ${JSON.stringify(letter.intake_data || {})}\n\nCurrent Content:\n${content}\n\nImproved version:`,
       temperature: 0.3,
-      maxTokens: 4000,
+      maxOutputTokens: 4000,
     })
 
     return NextResponse.json({

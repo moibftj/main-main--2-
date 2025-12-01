@@ -148,7 +148,7 @@ export function SubscriptionCard() {
   }
 
   const selectedPlanData = PLANS.find(p => p.id === selectedPlan)
-  const finalPrice = selectedPlanData ? selectedPlanData.price - discount : 0
+  const finalPrice = selectedPlanData ? (selectedPlanData.price ?? 0) - discount : 0
   const isTestMode = process.env.NEXT_PUBLIC_TEST_MODE === 'true'
 
   return (

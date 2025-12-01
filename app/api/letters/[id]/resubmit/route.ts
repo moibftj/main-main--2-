@@ -84,7 +84,7 @@ export async function POST(
         system: "You are a professional legal attorney revising a formal legal letter based on feedback. Incorporate the rejection feedback to create an improved, professional letter.",
         prompt,
         temperature: 0.7,
-        maxTokens: 2048,
+        maxOutputTokens: 2048,
       })
 
       if (!generatedContent) {

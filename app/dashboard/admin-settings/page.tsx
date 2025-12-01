@@ -21,7 +21,9 @@ import {
   Users,
   LogOut,
   Crown,
-  Activity
+  Activity,
+  Gift,
+  TrendingUp
 } from 'lucide-react'
 
 export default function AdminSettingsPage() {

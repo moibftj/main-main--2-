@@ -43,7 +43,7 @@ export async function POST(
       system: "You are a professional legal attorney improving formal legal letters. Always maintain professional legal tone and proper formatting.",
       prompt,
       temperature: 0.7,
-      maxTokens: 2048,
+      maxOutputTokens: 2048,
     })
 
     if (!improvedContent) {
