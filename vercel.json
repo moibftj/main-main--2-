@@ -20,5 +20,11 @@
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/subscriptions/reset-monthly",
+      "schedule": "0 0 1 * *"
+    }
   ]
 }

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from './lib/supabase/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 // Rate limiting configuration
@@ -91,7 +90,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/public/') ||
     pathname.includes('.')
   ) {
-    return updateSession(request)
+    return NextResponse.next()
   }
 
   // Apply rate limiting to API routes
@@ -138,118 +137,12 @@ export async function proxy(request: NextRequest) {
     return response
   }
 
-  // Admin auth middleware
-  if (pathname.startsWith('/secure-admin-gateway') && !pathname.includes('/login')) {
-    const supabase = await createClient()
-
-    // Get admin session cookie
-    const sessionCookie = request.cookies.get('admin_session')
-
-    if (!sessionCookie) {
-      // Redirect to login
-      const loginUrl = new URL('/secure-admin-gateway/login', request.url)
-      loginUrl.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    try {
-      const session = JSON.parse(sessionCookie.value)
-
-      // Check if session has expired (30 minutes)
-      const now = Date.now()
-      if (now - session.lastActivity > 30 * 60 * 1000) {
-        // Session expired, redirect to login
-        const loginUrl = new URL('/secure-admin-gateway/login', request.url)
-        loginUrl.searchParams.set('redirect', pathname)
-        loginUrl.searchParams.set('expired', 'true')
-
-        const response = NextResponse.redirect(loginUrl)
-        response.cookies.delete('admin_session')
-        return response
-      }
-
-      // Verify admin role in database
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.userId)
-        .single()
-
-      if (!profile || profile.role !== 'admin') {
-        // Not an admin, redirect to login
-        const loginUrl = new URL('/secure-admin-gateway/login', request.url)
-        loginUrl.searchParams.set('redirect', pathname)
-        return NextResponse.redirect(loginUrl)
-      }
-
-      // Update last activity
-      session.lastActivity = now
-      const response = await updateSession(request)
-      response.cookies.set('admin_session', JSON.stringify(session), {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 1800, // 30 minutes
-        path: '/'
-      })
-
-      return response
-
-    } catch (error) {
-      console.error('[AdminProxy] Error parsing session:', error)
-      const loginUrl = new URL('/secure-admin-gateway/login', request.url)
-      return NextResponse.redirect(loginUrl)
-    }
-  }
-
-  // Admin auth middleware for /admin routes
-  if (pathname.startsWith('/admin')) {
-    const supabase = await createClient()
-
-    // Refresh session if possible
-    const { data: { session }, error } = await supabase.auth.getSession()
-
-    if (!session || error) {
-      // Redirect to login
-      const loginUrl = new URL('/auth/login', request.url)
-      loginUrl.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    // Verify admin role
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
-
-    if (!profile || profile.role !== 'admin') {
-      // Not an admin, redirect with error
-      const dashboardUrl = new URL('/dashboard?error=admin-access-required', request.url)
-      return NextResponse.redirect(dashboardUrl)
-    }
-  }
-
-  // Auth middleware for protected routes
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/letters/')) {
-    const supabase = await createClient()
-
-    // Refresh session if possible
-    const { data: { session }, error } = await supabase.auth.getSession()
-
-    if (!session || error) {
-      // Redirect to login for page routes
-      if (pathname.startsWith('/dashboard')) {
-        const loginUrl = new URL('/auth/login', request.url)
-        loginUrl.searchParams.set('redirect', pathname)
-        return NextResponse.redirect(loginUrl)
-      }
-
-      // Return 401 for API routes
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-  }
-
+  // Delegate auth and routing to updateSession from lib/supabase/middleware
+  // This handles:
+  // 1. Supabase session refresh
+  // 2. Admin Portal protection (/secure-admin-gateway)
+  // 3. Dashboard auth checks
+  // 4. Role-based routing
   return updateSession(request)
 }
 

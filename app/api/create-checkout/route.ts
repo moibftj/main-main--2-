@@ -4,7 +4,7 @@ import Stripe from 'stripe'
 import { subscriptionRateLimit, safeApplyRateLimit } from '@/lib/rate-limit-redis'
 
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-11-17.clover',
+  apiVersion: '2024-11-20.acacia',
 }) : null
 
 const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true'

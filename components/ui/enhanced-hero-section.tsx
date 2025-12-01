@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useInView, MotionValue } from 'motion/react'
+import { motion, useScroll, useTransform, useInView } from 'motion/react'
 import { useRef, useEffect, useState } from 'react'
 import { Sparkles, ArrowRight, Play, CheckCircle } from 'lucide-react'
 
@@ -46,20 +46,7 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
     setParticles(newParticles)
   }, [])
 
-  // Floating animation values
-  const floatValues = Array.from({ length: 6 }, (_, i) => ({
-    y: useTransform(
-      scrollYProgress,
-      [0, 1],
-      [0, Math.sin(i) * 30 + Math.random() * 20]
-    ),
-    rotate: useTransform(
-      scrollYProgress,
-      [0, 1],
-      [0, Math.cos(i) * 15 + Math.random() * 10]
-    )
-  }))
-
+  
   return (
     <section
       ref={containerRef}

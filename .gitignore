@@ -47,6 +47,13 @@ claude_code_zai_env.sh
 vercel-add-env.sh
 vercel-env.json
 
+# Testing
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Misc
 *.log
 *.bak
