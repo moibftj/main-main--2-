@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { verifyAdminSessionFromRequest } from '@/lib/auth/admin-session'
 
+const CORS_HEADERS: Record<string, string> = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS, POST, PUT, DELETE',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes in milliseconds
 const RATE_LIMIT_MAX_REQUESTS: Record<string, number> = {
@@ -123,14 +129,7 @@ export async function proxy(request: NextRequest) {
   // 1. CORS Preflight for API routes
   // ------------------------------------------
   if (request.method === 'OPTIONS' && pathname.startsWith('/api')) {
-    return new NextResponse(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS, POST, PUT, DELETE',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    })
+    return new NextResponse(null, { status: 204, headers: CORS_HEADERS })
   }
 
   // ------------------------------------------
@@ -167,6 +166,7 @@ export async function proxy(request: NextRequest) {
       )
 
       // Add rate limit headers
+      Object.entries(CORS_HEADERS).forEach(([key, value]) => response.headers.set(key, value))
       response.headers.set('X-RateLimit-Limit', String(RATE_LIMIT_MAX_REQUESTS[pathname] || RATE_LIMIT_MAX_REQUESTS.default))
       response.headers.set('X-RateLimit-Remaining', '0')
       response.headers.set('X-RateLimit-Reset', String(Math.ceil(rateLimitResult.resetTime! / 1000)))
@@ -176,6 +176,7 @@ export async function proxy(request: NextRequest) {
 
     // For non-blocked API requests, just add headers and continue
     const response = await updateSession(request)
+    Object.entries(CORS_HEADERS).forEach(([key, value]) => response.headers.set(key, value))
     response.headers.set('X-RateLimit-Limit', String(RATE_LIMIT_MAX_REQUESTS[pathname] || RATE_LIMIT_MAX_REQUESTS.default))
     response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining || 0))
     response.headers.set('X-RateLimit-Reset', String(Math.ceil((rateLimitResult.resetTime || Date.now() + RATE_LIMIT_WINDOW) / 1000)))
