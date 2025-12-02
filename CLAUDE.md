@@ -2,6 +2,34 @@
 
 This document provides comprehensive guidance for AI assistants working with the Talk-To-My-Lawyer codebase. It explains the project structure, development workflows, coding conventions, and important context needed to effectively contribute to this project.
 
+---
+
+## Quick Reference: Complete Structural Inventory
+
+**For a complete inventory of all pages, endpoints, database tables, functions, components, and schemas, see:**
+
+📘 **[ARCHITECTURE_REFERENCE.md](./ARCHITECTURE_REFERENCE.md)** - Comprehensive structural reference
+
+This architecture reference document contains:
+- All page routes and their files
+- All API endpoints with methods and purposes
+- Complete database schema (tables, functions, triggers)
+- All components and their locations
+- TypeScript types and interfaces
+- RLS policies and security rules
+- External integrations (OpenAI, Stripe, Supabase)
+- Environment variables
+
+**Use the Architecture Reference when you need to:**
+- Find a specific endpoint or route
+- Look up database table schemas
+- Check available database functions
+- Locate component files
+- Verify RLS policies
+- Review integration details
+
+---
+
 ## Project Overview
 
 Talk-To-My-Lawyer is a production-ready SaaS platform that generates legal letters with AI assistance and professional attorney review. The platform enables users to create legally sound letters through an AI-powered workflow with mandatory human oversight.
