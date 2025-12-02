@@ -269,7 +269,6 @@ export async function POST(request: NextRequest) {
             user_id: user.id,
             coupon_code: couponCode,
             employee_id: employeeId,
-            subscription_id: subscription.id,
             discount_percent: discount,
             amount_before: basePrice,
             amount_after: finalPrice
