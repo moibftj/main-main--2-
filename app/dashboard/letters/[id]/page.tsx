@@ -8,8 +8,8 @@ import Link from 'next/link'
 import { LetterActions } from '@/components/letter-actions'
 import { ReviewStatusModal } from '@/components/review-status-modal'
 
-export default async function LetterDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default async function LetterDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const { profile } = await getUser()
   const supabase = await createClient()
 

@@ -5,10 +5,10 @@ import { openai } from '@ai-sdk/openai'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params
+    const { id } = params
     const supabase = await createClient()
 
     // Authenticate user

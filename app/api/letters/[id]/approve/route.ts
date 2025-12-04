@@ -5,7 +5,7 @@ import { adminRateLimit, safeApplyRateLimit } from '@/lib/rate-limit-redis'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Apply rate limiting
@@ -18,7 +18,7 @@ export async function POST(
     const authError = await requireAdminAuth()
     if (authError) return authError
 
-    const { id } = await params
+    const { id } = params
     const supabase = await createClient()
     const adminSession = await getAdminSession()
 
