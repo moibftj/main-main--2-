@@ -1,2 +1,2 @@
-export const DEFAULT_LOGO_SRC = '/talk-to-my-lawyer-logo.svg'
+export const DEFAULT_LOGO_SRC = 'https://mxhccjykkxbdvchmpqej.supabase.co/storage/v1/object/sign/hh/TALK%20LOGO.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zMWRkYjc5OS02OTBjLTQzZGYtOWRmZi01ZGFkZjQ4ODk5YjEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJoaC9UQUxLIExPR08ud2VicCIsImlhdCI6MTc2NDg1NDY2OCwiZXhwIjoxNzk2MzkwNjY4fQ.QS5KZxipeL6TCtNE_LlMW6dqdSQf81BHRuFdd-onBOQ'
 export const DEFAULT_LOGO_ALT = 'Talk-To-My-Lawyer logo'
