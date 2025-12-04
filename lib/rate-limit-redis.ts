@@ -179,6 +179,5 @@ function applyFallbackRateLimit(
 
 // Extend global type for in-memory store
 declare global {
-  // eslint-disable-next-line no-var
   var rateLimitStore: Map<string, { count: number; resetTime: number }> | undefined
 }

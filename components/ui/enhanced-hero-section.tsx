@@ -1,6 +1,9 @@
+'use client'
+
 import { motion, useScroll, useTransform, useInView } from 'motion/react'
-import { useRef, useEffect, useState } from 'react'
-import { Sparkles, ArrowRight, Play, CheckCircle } from 'lucide-react'
+import { useRef, useEffect, useState, useMemo } from 'react'
+import { Sparkles, ArrowRight, CheckCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface Particle {
   id: number
@@ -46,11 +49,19 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
     setParticles(newParticles)
   }, [])
 
-  // Floating animation values (currently unused but fine to keep for later)
-  const floatValues = Array.from({ length: 6 }, (_, i) => ({
-    y: useTransform(scrollYProgress, [0, 1], [0, Math.sin(i) * 30 + Math.random() * 20]),
-    rotate: useTransform(scrollYProgress, [0, 1], [0, Math.cos(i) * 15 + Math.random() * 10]),
-  }))
+  // Memoize float values to avoid recreating on each render
+  const floatValues = useMemo(() => 
+    Array.from({ length: 6 }, (_, i) => ({
+      yOffset: Math.sin(i) * 30 + 20,
+      rotateOffset: Math.cos(i) * 15 + 10,
+    })), []
+  )
+
+  const features = [
+    'AI-Powered Legal Letters',
+    'Attorney Reviewed',
+    'Fast Turnaround',
+  ]
 
   return (
     <section
@@ -87,3 +98,137 @@ export default function HeroSection({ onGetStarted, onLearnMore }: HeroSectionPr
             bottom: '20%',
           }}
           animate={{
+            x: [0, -80, 40, 0],
+            y: [0, 60, -40, 0],
+            scale: [1, 0.9, 1.1, 1],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+
+        {/* Floating Particles */}
+        {mounted && particles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            className="absolute rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 opacity-40"
+            style={{
+              width: particle.size,
+              height: particle.size,
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.4, 0.8, 0.4],
+            }}
+            transition={{
+              duration: particle.duration,
+              delay: particle.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-100 to-teal-100 border border-cyan-200 mb-8"
+        >
+          <Sparkles className="w-4 h-4 text-cyan-600" />
+          <span className="text-sm font-medium text-cyan-700">
+            AI-Powered Legal Assistance
+          </span>
+        </motion.div>
+
+        {/* Title */}
+        <motion.h1
+          style={{ y: titleY, opacity: titleOpacity }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6"
+        >
+          Professional Legal Letters
+          <br />
+          <span className="bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">
+            Made Simple
+          </span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-8"
+        >
+          Get professionally crafted legal letters reviewed by real attorneys. 
+          Fast, affordable, and tailored to your specific situation.
+        </motion.p>
+
+        {/* Features List */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="flex flex-wrap justify-center gap-4 mb-10"
+        >
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 text-gray-700"
+            >
+              <CheckCircle className="w-5 h-5 text-teal-500" />
+              <span className="text-sm font-medium">{feature}</span>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* CTA Buttons */}
+        <motion.div
+          style={{ y: buttonY, opacity: buttonOpacity }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center"
+        >
+          <Button
+            onClick={onGetStarted}
+            size="lg"
+            className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Get Started Free
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
+          <Button
+            onClick={onLearnMore}
+            variant="outline"
+            size="lg"
+            className="border-2 border-gray-300 hover:border-cyan-500 px-8 py-6 text-lg font-semibold rounded-xl transition-all duration-300"
+          >
+            Learn More
+          </Button>
+        </motion.div>
+
+        {/* Trust Indicator */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="mt-8 text-sm text-gray-500"
+        >
+          Trusted by thousands of clients • First letter free
+        </motion.p>
+      </div>
+    </section>
+  )
+}
