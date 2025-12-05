@@ -118,7 +118,7 @@ export default async function AnalyticsPage() {
           <h2 className="text-xl font-semibold mb-4">Top Performing Employees</h2>
           {topPerformers.length > 0 ? (
             <div className="space-y-3">
-              {topPerformers.map((emp: any, idx: number) => (
+              {topPerformers.map((emp: EmployeeStats, idx: number) => (
                 <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
