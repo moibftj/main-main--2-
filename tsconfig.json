@@ -17,6 +17,14 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    // Additional strict type checking options
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
     "plugins": [
       {
         "name": "next"
