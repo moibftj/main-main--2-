@@ -85,15 +85,18 @@
 			],
 			// Performance: VS Code specific settings
 			"settings": {
-				// TypeScript performance
+				// TypeScript performance - reduce memory
 				"typescript.tsserver.experimental.enableProjectDiagnostics": false,
-				"typescript.tsserver.maxTsServerMemory": 3072,
+				"typescript.tsserver.maxTsServerMemory": 2048,
 				"typescript.tsserver.watchOptions": {
 					"watchDirectory": "useFsEvents",
 					"watchFile": "useFsEvents"
 				},
-				// ESLint performance
-				"eslint.run": "onType",
+				"typescript.disableAutomaticTypeAcquisition": true,
+				"typescript.surveys.enabled": false,
+				
+				// ESLint performance - run on save only
+				"eslint.run": "onSave",
 				"eslint.packageManager": "pnpm",
 				"eslint.validate": [
 					"javascript",
@@ -101,21 +104,63 @@
 					"typescript",
 					"typescriptreact"
 				],
-				// General performance
+				
+				// General performance - disable heavy features
 				"editor.semanticTokenColorCustomizations": {
 					"enabled": false
 				},
 				"editor.tokenColorCustomizations": {
 					"enabled": false
 				},
+				"editor.codeLens": false,
+				"editor.minimap.enabled": false,
+				"editor.renderWhitespace": "none",
+				"editor.bracketPairColorization.enabled": false,
+				"editor.guides.indentation": false,
+				"editor.hover.delay": 1000,
+				"editor.quickSuggestions": {
+					"other": false,
+					"comments": false,
+					"strings": false
+				},
+				
+				// Git performance
 				"git.enableSmartCommit": true,
 				"git.autofetch": false,
+				"git.decorations.enabled": false,
+				"git.blame.enabled": false,
+				
+				// Extension performance
 				"extensions.autoUpdate": false,
+				"extensions.autoCheckUpdates": false,
 				"workbench.startupEditor": "none",
-				// Tailwind performance
+				
+				// Tailwind performance - exclude large dirs
 				"tailwindCSS.includeLanguages": {
 					"typescript": "javascript",
 					"typescriptreact": "javascriptreact"
+				},
+				"tailwindCSS.files.exclude": [
+					"**/.git/**",
+					"**/node_modules/**",
+					"**/.hg/**",
+					"**/.svn/**",
+					"**/.next/**"
+				],
+				
+				// Disable telemetry and updates
+				"telemetry.telemetryLevel": "off",
+				"update.mode": "none",
+				
+				// File watching - critical for memory
+				"files.watcherExclude": {
+					"**/node_modules/**": true,
+					"**/.git/objects/**": true,
+					"**/.git/subtree-cache/**": true,
+					"**/.next/**": true,
+					"**/out/**": true,
+					"**/dist/**": true,
+					"**/.pnpm/**": true
 				}
 			}
 		}
