@@ -32,6 +32,12 @@
 		"ghcr.io/devcontainers/features/github-cli:1": {
 			"version": "latest"
 		},
+		// Docker-in-Docker (required for Supabase local dev)
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest",
+			"moby": true,
+			"installDockerComposeV2": true
+		},
 		// Supabase CLI - for database management
 		"ghcr.io/devcontainers-extra/features/supabase-cli:1": {
 			"version": "latest"
