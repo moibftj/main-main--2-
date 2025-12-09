@@ -14,7 +14,9 @@ const store: RateLimitStore = {}
 setInterval(() => {
   const now = Date.now()
   for (const key in store) {
-    if (store[key].resetTime < now) {
+    const entry = store[key]
+
+    if (entry && entry.resetTime < now) {
       delete store[key]
     }
   }
@@ -93,7 +95,12 @@ function getClientIP(request: NextRequest): string {
   const cfConnectingIP = request.headers.get('cf-connecting-ip')
 
   if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim()
+    const [firstForwarded] = forwardedFor.split(',')
+    const forwarded = firstForwarded?.trim()
+
+    if (forwarded) {
+      return forwarded
+    }
   }
 
   if (realIP) {

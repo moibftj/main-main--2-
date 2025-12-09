@@ -7,7 +7,7 @@ interface GenerateLetterButtonProps {
   loading?: boolean;
   disabled?: boolean;
   hasSubscription?: boolean;
-  onClick?: () => void;
+  onClick?: (() => void) | undefined;
   type?: 'button' | 'submit';
   className?: string;
   children?: React.ReactNode;

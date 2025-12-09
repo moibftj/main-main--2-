@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getAppUrl } from '@/lib/config/site'
 import { subscriptionRateLimit, safeApplyRateLimit } from '@/lib/rate-limit-redis'
 
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -8,6 +9,7 @@ const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SEC
 }) : null
 
 const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true'
+const appOrigin = getAppUrl().origin
 
 export async function POST(request: NextRequest) {
   console.log('[Checkout] Request received, TEST_MODE:', TEST_MODE)
@@ -347,7 +349,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Stripe Checkout Session for paid plans
-    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const origin = request.headers.get('origin') || appOrigin
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',

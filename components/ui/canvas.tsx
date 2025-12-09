@@ -83,17 +83,21 @@ class Line {
   }
 
   update(pos: Position, env: EnvironmentConfig): void {
+    if (this.nodes.length === 0) {
+      return
+    }
+
     let spring = this.spring;
-    let node = this.nodes[0];
-    
-    node.vx += (pos.x - node.x) * spring;
-    node.vy += (pos.y - node.y) * spring;
-    
+    const firstNode = this.nodes[0]!;
+
+    firstNode.vx += (pos.x - firstNode.x) * spring;
+    firstNode.vy += (pos.y - firstNode.y) * spring;
+
     for (let i = 0; i < this.nodes.length; i++) {
-      node = this.nodes[i];
-      
+      const node = this.nodes[i]!;
+
       if (i > 0) {
-        const prev = this.nodes[i - 1];
+        const prev = this.nodes[i - 1]!;
         node.vx += (prev.x - node.x) * spring;
         node.vy += (prev.y - node.y) * spring;
         node.vx += prev.vx * env.dampening;
@@ -109,22 +113,34 @@ class Line {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
-    let x = this.nodes[0].x;
-    let y = this.nodes[0].y;
+    if (this.nodes.length === 0) {
+      return
+    }
+
+    const firstNode = this.nodes[0]!;
+    if (this.nodes.length === 1) {
+      ctx.beginPath();
+      ctx.moveTo(firstNode.x, firstNode.y);
+      ctx.stroke();
+      ctx.closePath();
+      return
+    }
+    let x = firstNode.x;
+    let y = firstNode.y;
     
     ctx.beginPath();
     ctx.moveTo(x, y);
     
     for (let i = 1; i < this.nodes.length - 2; i++) {
-      const curr = this.nodes[i];
-      const next = this.nodes[i + 1];
+      const curr = this.nodes[i]!;
+      const next = this.nodes[i + 1]!;
       x = 0.5 * (curr.x + next.x);
       y = 0.5 * (curr.y + next.y);
       ctx.quadraticCurveTo(curr.x, curr.y, x, y);
     }
-    
-    const lastNode = this.nodes[this.nodes.length - 2];
-    const finalNode = this.nodes[this.nodes.length - 1];
+
+    const lastNode = this.nodes[this.nodes.length - 2]!;
+    const finalNode = this.nodes[this.nodes.length - 1]!;
     ctx.quadraticCurveTo(lastNode.x, lastNode.y, finalNode.x, finalNode.y);
     ctx.stroke();
     ctx.closePath();
@@ -154,8 +170,10 @@ function initLines(): void {
 
 function handleMove(e: MouseEvent | TouchEvent): void {
   if ('touches' in e && e.touches.length > 0) {
-    pos.x = e.touches[0].pageX;
-    pos.y = e.touches[0].pageY;
+    const touch = e.touches[0]
+    if (!touch) return
+    pos.x = touch.pageX;
+    pos.y = touch.pageY;
   } else if ('clientX' in e) {
     pos.x = e.clientX;
     pos.y = e.clientY;
@@ -165,8 +183,10 @@ function handleMove(e: MouseEvent | TouchEvent): void {
 
 function handleTouchStart(e: TouchEvent): void {
   if (e.touches.length === 1) {
-    pos.x = e.touches[0].pageX;
-    pos.y = e.touches[0].pageY;
+    const touch = e.touches[0]
+    if (!touch) return
+    pos.x = touch.pageX;
+    pos.y = touch.pageY;
   }
 }
 
@@ -189,10 +209,12 @@ function render(): void {
   ctx.globalCompositeOperation = 'lighter';
   ctx.strokeStyle = `hsla(${Math.round(oscillator.update())},100%,50%,0.025)`;
   ctx.lineWidth = 10;
-  
+
   for (let i = 0; i < E.trails; i++) {
-    lines[i].update(pos, E);
-    lines[i].draw(ctx);
+    const line = lines[i]
+    if (!line) continue
+    line.update(pos, E);
+    line.draw(ctx);
   }
   
   ctx.frame++;

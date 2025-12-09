@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { authRateLimit, safeApplyRateLimit } from '@/lib/rate-limit-redis'
+import { getAppUrl } from '@/lib/config/site'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,10 +18,11 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createClient()
+    const resetUrl = new URL('/auth/reset-password', getAppUrl()).toString()
 
     // Generate password reset token
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
+      redirectTo: resetUrl,
     })
 
     if (error) {

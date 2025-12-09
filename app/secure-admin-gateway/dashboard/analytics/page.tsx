@@ -2,13 +2,19 @@ import { getUser } from '@/lib/auth/get-user'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { DashboardLayout } from '@/components/dashboard-layout'
-import type { Database } from '@/lib/database.types'
 
 type EmployeeStats = {
   employeeId: string
   fullName: string | null
   totalCommission: number
   couponCount: number
+}
+
+type CommissionWithRelations = {
+  employee_id: string
+  commission_amount: number | null
+  employee_coupons?: { code: string | null }[] | null
+  profiles?: { full_name: string | null }[] | null
 }
 
 export default async function AnalyticsPage() {
@@ -41,14 +47,12 @@ export default async function AnalyticsPage() {
   const activeSubscriptions = subscriptions?.length || 0
 
   // Calculate employee performance
-  const employeeStats = topEmployees?.reduce((acc: Record<string, EmployeeStats>, comm: Database['public']['Tables']['commissions']['Row'] & {
-    profiles: { full_name: string | null } | null
-  }) => {
+  const employeeStats = topEmployees?.reduce<Record<string, EmployeeStats>>((acc, comm: CommissionWithRelations) => {
     const empId = comm.employee_id
     if (!acc[empId]) {
       acc[empId] = {
         employeeId: empId,
-        fullName: comm.profiles?.full_name || 'Unknown',
+        fullName: comm.profiles?.[0]?.full_name || 'Unknown',
         totalCommission: 0,
         couponCount: 0
       }
@@ -125,8 +129,8 @@ export default async function AnalyticsPage() {
                       {idx + 1}
                     </div>
                     <div>
-                      <div className="font-medium">{emp.name}</div>
-                      <div className="text-sm text-slate-600">{emp.count} sales</div>
+                      <div className="font-medium">{emp.fullName}</div>
+                      <div className="text-sm text-slate-600">{emp.couponCount} sales</div>
                     </div>
                   </div>
                   <div className="text-lg font-semibold text-green-600">

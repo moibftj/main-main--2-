@@ -1,14 +1,15 @@
 import type { Metadata } from "next"
+import { getAppUrl } from "@/lib/config/site"
 import "./globals.css"
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.talk-to-my-lawyer.com'
+const appUrl = getAppUrl()
 const LOGO_URL = 'https://mxhccjykkxbdvchmpqej.supabase.co/storage/v1/object/sign/hh/TALK%20LOGO.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zMWRkYjc5OS02OTBjLTQzZGYtOWRmZi01ZGFkZjQ4ODk5YjEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJoaC9UQUxLIExPR08ud2VicCIsImlhdCI6MTc2NDg1NDY2OCwiZXhwIjoxNzk2MzkwNjY4fQ.QS5KZxipeL6TCtNE_LlMW6dqdSQf81BHRuFdd-onBOQ'
 
 export const metadata: Metadata = {
   title: "Talk-To-My-Lawyer - Professional Legal Letters",
   description: "Professional legal letter generation with attorney review. Get demand letters, cease and desist notices, and more.",
   generator: 'v0.app',
-  metadataBase: new URL(APP_URL),
+  metadataBase: appUrl,
   icons: {
     icon: [
       { url: LOGO_URL, type: 'image/webp' },

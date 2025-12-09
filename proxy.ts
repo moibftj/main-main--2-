@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { verifyAdminSessionFromRequest } from '@/lib/auth/admin-session'
+import { getAllowedOrigins, getAppOrigin } from '@/lib/config/site'
 
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS, POST, PUT, DELETE',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+const allowedOrigins = getAllowedOrigins()
+const primaryOrigin = getAppOrigin()
+
+function applyCorsHeaders(response: NextResponse, request: NextRequest) {
+  const requestOrigin = request.headers.get('origin')
+  const allowOrigin = requestOrigin && allowedOrigins.has(requestOrigin)
+    ? requestOrigin
+    : primaryOrigin
+
+  response.headers.set('Access-Control-Allow-Origin', allowOrigin)
+  response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS, POST, PUT, DELETE')
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  response.headers.set('Access-Control-Allow-Credentials', 'true')
+  response.headers.set('Vary', 'Origin')
+
+  return response
 }
 
 // Rate limiting configuration
@@ -28,7 +41,12 @@ function getClientId(request: NextRequest): string {
   const cfConnectingIP = request.headers.get('cf-connecting-ip')
 
   if (forwarded) {
-    return forwarded.split(',')[0].trim()
+    const [firstForwarded] = forwarded.split(',')
+    const forwardedIP = firstForwarded?.trim()
+
+    if (forwardedIP) {
+      return forwardedIP
+    }
   }
 
   if (realIP) {
@@ -54,7 +72,7 @@ function isRateLimited(request: NextRequest): { limited: boolean; resetTime?: nu
   const now = Date.now()
 
   // Get rate limit for this specific endpoint
-  const maxRequests = RATE_LIMIT_MAX_REQUESTS[path] || RATE_LIMIT_MAX_REQUESTS.default
+  const maxRequests = RATE_LIMIT_MAX_REQUESTS[path] ?? RATE_LIMIT_MAX_REQUESTS.default ?? 100
 
   // Get or create rate limit entry
   let entry = rateLimitStore.get(clientId)
@@ -129,7 +147,7 @@ export async function proxy(request: NextRequest) {
   // 1. CORS Preflight for API routes
   // ------------------------------------------
   if (request.method === 'OPTIONS' && pathname.startsWith('/api')) {
-    return new NextResponse(null, { status: 204, headers: CORS_HEADERS })
+    return applyCorsHeaders(new NextResponse(null, { status: 204 }), request)
   }
 
   // ------------------------------------------
@@ -166,7 +184,7 @@ export async function proxy(request: NextRequest) {
       )
 
       // Add rate limit headers
-      Object.entries(CORS_HEADERS).forEach(([key, value]) => response.headers.set(key, value))
+      applyCorsHeaders(response, request)
       response.headers.set('X-RateLimit-Limit', String(RATE_LIMIT_MAX_REQUESTS[pathname] || RATE_LIMIT_MAX_REQUESTS.default))
       response.headers.set('X-RateLimit-Remaining', '0')
       response.headers.set('X-RateLimit-Reset', String(Math.ceil(rateLimitResult.resetTime! / 1000)))
@@ -175,8 +193,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // For non-blocked API requests, just add headers and continue
-    const response = await updateSession(request)
-    Object.entries(CORS_HEADERS).forEach(([key, value]) => response.headers.set(key, value))
+    const response = applyCorsHeaders(await updateSession(request), request)
     response.headers.set('X-RateLimit-Limit', String(RATE_LIMIT_MAX_REQUESTS[pathname] || RATE_LIMIT_MAX_REQUESTS.default))
     response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining || 0))
     response.headers.set('X-RateLimit-Reset', String(Math.ceil((rateLimitResult.resetTime || Date.now() + RATE_LIMIT_WINDOW) / 1000)))

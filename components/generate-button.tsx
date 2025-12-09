@@ -6,7 +6,7 @@ interface GenerateButtonProps {
   loading?: boolean;
   disabled?: boolean;
   hasSubscription?: boolean;
-  onClick?: () => void;
+  onClick?: (() => void) | undefined;
   type?: 'button' | 'submit';
   className?: string;
 }

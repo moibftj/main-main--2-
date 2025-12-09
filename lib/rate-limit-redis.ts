@@ -41,7 +41,13 @@ function getClientIP(request: NextRequest): string {
   const cfConnectingIP = request.headers.get('cf-connecting-ip')
 
   if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim()
+    const [firstForwarded] = forwardedFor.split(',')
+
+    const forwarded = firstForwarded?.trim()
+
+    if (forwarded) {
+      return forwarded
+    }
   }
 
   if (realIP) {
@@ -128,8 +134,15 @@ function parseWindowToMs(window: string): number {
   const match = window.match(/^(\d+)\s*([smhd])$/)
   if (!match) return 60 * 1000 // Default to 1 minute
 
-  const [, num, unit] = match
-  return parseInt(num) * (units[unit] || 60 * 1000)
+  const [, num = '0', unit = 'm'] = match
+  const parsedNumber = Number.parseInt(num, 10)
+  const unitMs = units[unit] ?? 60 * 1000
+
+  if (Number.isNaN(parsedNumber)) {
+    return 60 * 1000
+  }
+
+  return parsedNumber * unitMs
 }
 
 function applyFallbackRateLimit(

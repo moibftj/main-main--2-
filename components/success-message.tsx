@@ -36,6 +36,8 @@ export default function SuccessMessage() {
 
       return () => clearTimeout(timer)
     }
+
+    return undefined
   }, [searchParams])
 
   if (!message) return null

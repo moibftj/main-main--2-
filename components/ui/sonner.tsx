@@ -5,10 +5,16 @@ import { Toaster as Sonner, ToasterProps } from 'sonner'
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
+  const safeTheme = theme ?? 'system'
+  const resolvedTheme: ToasterProps['theme'] =
+    safeTheme === 'light' || safeTheme === 'dark' || safeTheme === 'system'
+      ? safeTheme
+      : 'system'
+  const { theme: _unusedTheme, ...toasterProps } = props
 
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
+      theme={resolvedTheme}
       className="toaster group"
       style={
         {
@@ -17,7 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           '--normal-border': 'var(--border)',
         } as React.CSSProperties
       }
-      {...props}
+      {...toasterProps}
     />
   )
 }

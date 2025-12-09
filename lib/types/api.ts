@@ -1,5 +1,14 @@
-import { NextRequest } from 'next/server'
-import { Database } from '@/lib/database.types'
+import { NextRequest, NextResponse } from 'next/server'
+import type {
+  Commission as DbCommission,
+  EmployeeCoupon as DbEmployeeCoupon,
+  Letter as DbLetter,
+  LetterAuditTrail as DbLetterAuditTrail,
+  LetterStatus as DbLetterStatus,
+  Profile as DbProfile,
+  Subscription as DbSubscription,
+  UserRole as DbUserRole,
+} from '@/lib/database.types'
 
 // Common API Response Types
 export interface ApiResponse<T = unknown> {
@@ -19,15 +28,15 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 }
 
 // Database Types
-export type Profile = Database['public']['Tables']['profiles']['Row']
-export type Letter = Database['public']['Tables']['letters']['Row']
-export type Subscription = Database['public']['Tables']['subscriptions']['Row']
-export type EmployeeCoupon = Database['public']['Tables']['employee_coupons']['Row']
-export type Commission = Database['public']['Tables']['commissions']['Row']
-export type LetterAuditTrail = Database['public']['Tables']['letter_audit_trail']['Row']
+export type Profile = DbProfile
+export type Letter = DbLetter
+export type Subscription = DbSubscription
+export type EmployeeCoupon = DbEmployeeCoupon
+export type Commission = DbCommission
+export type LetterAuditTrail = DbLetterAuditTrail
 
 // Letter Status Types
-export type LetterStatus = Letter['status']
+export type LetterStatus = DbLetterStatus
 export const LETTER_STATUSES = [
   'draft',
   'generating',
@@ -40,7 +49,7 @@ export const LETTER_STATUSES = [
 ] as const satisfies LetterStatus[]
 
 // User Role Types
-export type UserRole = Profile['role']
+export type UserRole = DbUserRole
 export const USER_ROLES = ['subscriber', 'employee', 'admin'] as const satisfies UserRole[]
 
 // API Route Handler Types

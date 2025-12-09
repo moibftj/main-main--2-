@@ -3,16 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Letter } from "@/lib/types/api"
-import type { Database } from "@/lib/database.types"
+import type { LetterStatus } from "@/lib/database.types"
 
 type LetterWithProfile = {
   id: string
   title: string | null
-  status: Database['public']['Tables']['letters']['Row']['status']
+  status: LetterStatus
   created_at: string
-  profiles: {
+  profiles?: {
     email: string | null
-  }
+  }[]
 }
 import {
   Mail,
@@ -179,7 +179,7 @@ export default async function AdminDashboard() {
                   <div key={letter.id} className="flex items-center justify-between">
                     <div className="flex-1">
                       <p className="text-sm font-medium truncate">{letter.title}</p>
-                      <p className="text-xs text-gray-500">{letter.profiles?.email}</p>
+                      <p className="text-xs text-gray-500">{letter.profiles?.[0]?.email ?? 'Unknown user'}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(letter.status)}

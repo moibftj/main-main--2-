@@ -103,7 +103,7 @@ export default function LoginPage() {
         'admin': '/dashboard/admin/letters'
       }
 
-      const redirectPath = roleRedirects[profile?.role || 'subscriber']
+      const redirectPath = roleRedirects[profile?.role || 'subscriber'] || '/dashboard/letters'
       console.log('[Login] Redirecting to:', redirectPath)
       
       router.push(redirectPath)
