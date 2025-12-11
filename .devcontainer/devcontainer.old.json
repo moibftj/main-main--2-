@@ -1,0 +1,217 @@
+// For format details, see https://aka.ms/devcontainer.json
+// Talk-To-My-Lawyer: Next.js 16 + Supabase + Stripe + AI SaaS Development Environment
+// OPTIMIZED: Low storage footprint with full features
+{
+	"name": "Talk-To-My-Lawyer Dev",
+	// Use slim Node.js image for smaller footprint
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+
+	// Optimized resources - balanced for performance vs storage
+	"runArgs": [
+		"--memory=4g",
+		"--cpus=2",
+		"--shm-size=512m",
+		"--init",
+		"--storage-opt=size=10G"
+	],
+
+	// Minimal volume mounts - only essential persistence
+	"mounts": [
+		"source=${localWorkspaceFolderBasename}-pnpm-store,target=/home/node/.local/share/pnpm,type=volume"
+	],
+
+	// Override default command to ensure proper shell
+	"overrideCommand": false,
+
+	"features": {
+		// Git and GitHub CLI (essential)
+		"ghcr.io/devcontainers/features/git:1": {
+			"version": "latest",
+			"ppa": false
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest"
+		},
+		// Docker-in-Docker (required for Supabase local dev)
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest",
+			"moby": true,
+			"installDockerComposeV2": true
+		},
+		// Supabase CLI - for database management
+		"ghcr.io/devcontainers-extra/features/supabase-cli:1": {
+			"version": "latest"
+		},
+		// Vercel CLI - for deployment
+		"ghcr.io/devcontainers-extra/features/vercel-cli:1": {
+			"version": "latest"
+		},
+		// Stripe CLI - for payment testing
+		"ghcr.io/dhoeric/features/stripe-cli:1": {
+			"version": "latest"
+		}
+	},
+
+	// Forward ports for development
+	"forwardPorts": [
+		3000,
+		54321,
+		54322,
+		4242
+	],
+
+	"portsAttributes": {
+		"3000": {
+			"label": "Next.js App",
+			"onAutoForward": "notify"
+		},
+		"54321": {
+			"label": "Supabase Studio",
+			"onAutoForward": "silent"
+		},
+		"54322": {
+			"label": "Supabase API",
+			"onAutoForward": "silent"
+		},
+		"4242": {
+			"label": "Stripe Webhooks",
+			"onAutoForward": "silent"
+		}
+	},
+
+	// Environment variables for the container
+	"containerEnv": {
+		"NODE_ENV": "development",
+		"NEXT_TELEMETRY_DISABLED": "1"
+	},
+
+	// Run setup script after container creation
+	"postCreateCommand": "bash .devcontainer/setup.sh",
+
+	// Run on container start (every time)
+	"postStartCommand": "bash .devcontainer/start.sh",
+
+	// VS Code customizations
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// Core development
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"bradlc.vscode-tailwindcss",
+				// Git & GitHub
+				"github.vscode-pull-request-github",
+				"eamodio.gitlens",
+				// Environment & Config
+				"mikestead.dotenv",
+				// Productivity
+				"christian-kohler.path-intellisense",
+				"formulahendry.auto-rename-tag",
+				// AI & Copilot
+				"github.copilot",
+				"github.copilot-chat",
+				// Error Lens for inline errors
+				"usernamehw.errorlens"
+			],
+			"settings": {
+				// CRITICAL: Enable shell integration for command detection
+				"terminal.integrated.shellIntegration.enabled": true,
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "/bin/bash",
+						"args": ["-l"]
+					}
+				},
+				
+				// Editor settings
+				"editor.defaultFormatter": "esbenp.prettier-vscode",
+				"editor.formatOnSave": true,
+				"editor.codeActionsOnSave": {
+					"source.fixAll.eslint": "explicit"
+				},
+				"editor.tabSize": 2,
+				"editor.wordWrap": "on",
+				"editor.linkedEditing": true,
+				"editor.bracketPairColorization.enabled": true,
+				"editor.guides.bracketPairs": true,
+				"editor.minimap.enabled": false,
+				"editor.quickSuggestions": {
+					"strings": true
+				},
+				
+				// TypeScript settings
+				"typescript.preferences.importModuleSpecifier": "relative",
+				"typescript.suggest.autoImports": true,
+				"typescript.updateImportsOnFileMove.enabled": "always",
+				"typescript.tsserver.maxTsServerMemory": 4096,
+				
+				// ESLint settings
+				"eslint.validate": [
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact"
+				],
+				"eslint.workingDirectories": [{ "mode": "auto" }],
+				"eslint.run": "onSave",
+				
+				// Tailwind CSS settings
+				"tailwindCSS.experimental.classRegex": [
+					["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+					["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+				],
+				"tailwindCSS.includeLanguages": {
+					"typescript": "javascript",
+					"typescriptreact": "javascriptreact"
+				},
+				"tailwindCSS.emmetCompletions": true,
+				
+				// File associations
+				"files.associations": {
+					"*.css": "tailwindcss",
+					".env*": "dotenv"
+				},
+				
+				// File watcher exclusions (performance)
+				"files.watcherExclude": {
+					"**/node_modules/**": true,
+					"**/.git/objects/**": true,
+					"**/.git/subtree-cache/**": true,
+					"**/.next/**": true,
+					"**/out/**": true,
+					"**/dist/**": true,
+					"**/.pnpm/**": true,
+					"**/coverage/**": true
+				},
+				
+				// Search exclusions
+				"search.exclude": {
+					"**/node_modules": true,
+					"**/.next": true,
+					"**/out": true,
+					"**/dist": true,
+					"**/.git": true,
+					"**/pnpm-lock.yaml": true,
+					"**/package-lock.json": true
+				},
+				
+				// Git settings
+				"git.enableSmartCommit": true,
+				"git.confirmSync": false,
+				"git.autofetch": true,
+				
+				// Misc settings
+				"telemetry.telemetryLevel": "off",
+				"workbench.startupEditor": "none",
+				"explorer.confirmDelete": false,
+				"explorer.confirmDragAndDrop": false,
+				
+				// Path intellisense
+				"path-intellisense.mappings": {
+					"@": "${workspaceFolder}"
+				}
+			}
+		}
+	}
+}

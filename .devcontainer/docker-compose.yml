@@ -1,0 +1,38 @@
+# =============================================================================
+# Talk-To-My-Lawyer Development Environment
+# docker-compose.yml
+# =============================================================================
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ttml-dev
+    volumes:
+      # Mount the project directory
+      - ..:/workspace:cached
+      # Persist node_modules in a named volume for performance
+      - node_modules:/workspace/node_modules
+      # Persist pnpm store
+      - pnpm_store:/home/developer/.local/share/pnpm
+      # Persist bash history
+      - bash_history:/home/developer/.bash_history
+    ports:
+      - "3000:3000"   # Next.js dev server
+      - "54321:54321" # Supabase Studio
+      - "54322:54322" # Supabase API
+      - "4242:4242"   # Stripe webhooks
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    # Keep container running
+    command: sleep infinity
+
+volumes:
+  node_modules:
+  pnpm_store:
+  bash_history:
